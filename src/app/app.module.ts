@@ -4,13 +4,15 @@ import { HomeComponent } from "./pages/home/home.component";
 import { BrowserModule, provideClientHydration } from "@angular/platform-browser";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
-import { DATE_PIPE_DEFAULT_OPTIONS } from "@angular/common";
+import { CommonModule, DATE_PIPE_DEFAULT_OPTIONS } from "@angular/common";
+import { XlsxToJsonComponent } from "./components/xlsx-to-json/xlsx-to-json.component";
 
 @NgModule({
   declarations: [
     AppComponent,
     // Pages
     HomeComponent,
+    XlsxToJsonComponent,
   ],
   imports: [
     BrowserModule,

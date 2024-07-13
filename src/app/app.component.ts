@@ -7,7 +7,7 @@ import { HomeComponent } from "./pages/home/home.component";
     standalone: true,
     templateUrl: './app.component.html',
     styleUrl: './app.component.css',
-    imports: [RouterOutlet, HomeComponent]
+    imports: [RouterOutlet, HomeComponent,]
 })
 export class AppComponent {
   title = 'nanoautomation';
