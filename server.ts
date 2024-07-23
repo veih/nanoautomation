@@ -24,36 +24,6 @@ export function app(): express.Express {
   // server.get('/api/**', (req, res) => {});
 
   // Server-side file upload endpoint for XLSX files
-  const upload = multer({ dest: 'uploads/' }); // Changed to a relative path
-  server.post('/upload-xlsx', upload.single('file'), async (req, res) => {
-    const xlsxFile = req.file;
-
-    if (!xlsxFile) {
-      res.status(400).send('No file uploaded!');
-      return;
-    }
-
-    const filePath = xlsxFile.path; // filePath is already a string
-
-    try {
-      const workbook = XLSX.readFile(filePath);
-      const sheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
-      const data = XLSX.utils.sheet_to_json(worksheet);
-
-      // Process the extracted data (data is an array of objects representing rows)
-      console.log('XLSX data:', data);
-
-      // ...
-
-      res.send({ message: 'File uploaded and processed successfully!', data });
-    } catch (error) {
-      console.error('Error parsing XLSX file:', error);
-      res.status(500).send('Failed to process uploaded file!');
-    } finally {
-      fs.unlinkSync(filePath); // Remove temporary uploaded file
-    }
-  });
 
   // Serve static files from /browser
   server.get('*.*', express.static(browserDistFolder, {
