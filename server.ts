@@ -4,6 +4,8 @@ import express from 'express';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve } from 'node:path';
 import bootstrap from './src/main.server';
+import pool from './db';
+
 
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
@@ -19,6 +21,16 @@ export function app(): express.Express {
 
   // Example Express Rest API endpoints
   // server.get('/api/**', (req, res) => {});
+
+  server.get('/api/data', async (req, res) => {
+    try {
+      const [rows, fields] = await pool.query('SELECT * FROM sua_tabela');
+      res.json(rows);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Failed to fetch data from database' });
+    }
+  });
 
   // Server-side file upload endpoint for XLSX files
 
