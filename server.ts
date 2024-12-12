@@ -4,10 +4,14 @@ import express from 'express';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve } from 'node:path';
 import bootstrap from './src/main.server';
+import ADODB from 'node-adodb'; // Adicionado
 import pool from './db';
 
+// Configuração da conexão com o banco de dados Access
+const accessDbPath = join(__dirname, 'C:\\Users\\RMSF_SDAI\\Application Data\\Desktop\\teste1.accdb'); // Altere para o caminho real do seu arquivo .accdb
+const connection = ADODB.open(`Provider=Microsoft.ACE.OLEDB.12.0;Data Source=${accessDbPath};Persist Security Info=False;`);
 
-// The Express app is exported so that it can be used by serverless Functions.
+// A função app é exportada para ser usada por funções serverless.
 export function app(): express.Express {
   const server = express();
   const serverDistFolder = dirname(fileURLToPath(import.meta.url));
@@ -19,27 +23,28 @@ export function app(): express.Express {
   server.set('view engine', 'html');
   server.set('views', browserDistFolder);
 
-  // Example Express Rest API endpoints
+  // Exemplo de endpoints API REST Express
   // server.get('/api/**', (req, res) => {});
 
   server.get('/api/data', async (req, res) => {
     try {
-      const [rows, fields] = await pool.query('SELECT * FROM sua_tabela');
+      const query = 'SELECT * FROM geral-SCA'; // Altere para o nome da sua tabela
+      const rows = await connection.query(query);
       res.json(rows);
     } catch (err) {
       console.error(err);
-      res.status(500).json({ error: 'Failed to fetch data from database' });
+      res.status(500).json({ error: 'Falha ao buscar dados do banco de dados' });
     }
   });
 
-  // Server-side file upload endpoint for XLSX files
+  // Endpoint para upload de arquivo XLSX no lado do servidor
 
-  // Serve static files from /browser
+  // Servir arquivos estáticos a partir de /browser
   server.get('*.*', express.static(browserDistFolder, {
     maxAge: '1y'
   }));
 
-  // All regular routes use the Angular engine
+  // Todas as rotas regulares usam o mecanismo Angular
   server.get('*', (req, res, next) => {
     const { protocol, originalUrl, baseUrl, headers } = req;
 
@@ -61,10 +66,10 @@ export function app(): express.Express {
 function run(): void {
   const port = process.env['PORT'] || 4000;
 
-  // Start up the Node server
+  // Iniciar o servidor Node
   const server = app();
   server.listen(port, () => {
-    console.log(`Node Express server listening on http://localhost:${port}`);
+    console.log(`Servidor Node Express ouvindo em http://localhost:${port}`);
   });
 }
 
