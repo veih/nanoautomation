@@ -245,31 +245,31 @@ npm run dev-ngrok    # Start dev server with ngrok tunnel
 *Interface inicial do sistema com acesso rápido aos principais módulos*
 
 ### 🛠️ Dashboard Corretiva
-![Dashboard Corretiva](/images/dashboard-corretiva.png)
+![Dashboard Corretiva](/public/images/dashboard-corretiva.png)
 *Sistema de gestão de manutenção corretiva com acompanhamento de ações*
 
 ### 🏪 Dashboard Lojas
-![Dashboard Lojas](/images/dashboard-lojas.png)
+![Dashboard Lojas](/public/images/dashboard-lojas.png)
 *Gestão completa de lojas com monitoramento de equipamentos e defeitos*
 
 ### ⚙️ Dashboard CMS (Centros de Manutenção)
-![Dashboard CMS](/images/dashboard-cms.png)
+![Dashboard CMS](/public/images/dashboard-cms.png)
 *Monitoramento centralizado de centros de manutenção e seus equipamentos*
 
 ### 💧 Dashboard CVF (Controle de Vazamento de Fluidos)
-![Dashboard CVF](/images/dashboard-cvf.png)
+![Dashboard CVF](/public/images/dashboard-cvf.png)
 *Acompanhamento de sistemas de controle de vazamento de fluidos*
 
 ### 🔥 Dashboard SDAI (Detecção de Incêndio)
-![Dashboard SDAI](/images/dashboard-sdai.png)
+![Dashboard SDAI](/public/images/dashboard-sdai.png)
 *Sistema de detecção e alarme de incêndio com monitoramento em tempo real*
 
 ### ⚡ Dashboard SCP (Proteção Contra Descargas)
-![Dashboard SCP](/images/dashboard-scp.png)
+![Dashboard SCP](/public/images/dashboard-scp.png)
 *Proteção contra descargas atmosféricas e monitoramento de SPDA*
 
 ### 🔐 Dashboard Access Control
-![Dashboard Access Control](/images/dashboard-access-control.png)
+![Dashboard Access Control](/public/images/dashboard-access-control.png)
 *Sistema de controle de acesso com gestão de dispositivos de segurança*
 
 </div>
