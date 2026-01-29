@@ -241,7 +241,7 @@ npm run dev-ngrok    # Start dev server with ngrok tunnel
 <div align="center">
 
 ### 🏠 Dashboard Principal (Nanoautomation)
-![Dashboard Principal](/images/dashboard-home.png)
+![Dashboard Principal](/public/images/dashboard-home.png)
 *Interface inicial do sistema com acesso rápido aos principais módulos*
 
 ### 🛠️ Dashboard Corretiva
