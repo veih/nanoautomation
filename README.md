@@ -264,9 +264,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Marcelo Evangelista de Oliveira**  
 Full Stack Developer & Software Engineer
 
-📧 Email: [marcelo@example.com](mailto:marcelo@example.com)  
-💼 LinkedIn: [linkedin.com/in/marceloeoliveira](https://linkedin.com/in/marceloeoliveira)  
-🌐 Portfolio: [marcelo.dev](https://marcelo.dev)
+📧 Email: [tancker@hotmail.com]  
+💼 LinkedIn: [linkedin.com/in/marcelo](https://linkedin.com/in/marcelo)  
+🌐 Portfolio: [marcelo.dev](https://veih.github.io/portifolio/)
 
 ---
 
