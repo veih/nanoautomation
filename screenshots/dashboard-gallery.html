@@ -1,0 +1,144 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NanoAutomation - Dashboard Gallery</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            padding: 20px;
+            margin: 0;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 30px; color: white; }
+        h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        .gallery { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); 
+            gap: 20px; 
+        }
+        .card { 
+            background: white; 
+            border-radius: 12px; 
+            padding: 20px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .card h3 { color: #4facfe; margin-top: 0; }
+        .url { 
+            background: #f1f3f4; 
+            padding: 10px; 
+            border-radius: 6px; 
+            font-family: monospace; 
+            margin: 10px 0;
+        }
+        .filename { 
+            background: #e3f2fd; 
+            padding: 8px 12px; 
+            border-radius: 20px; 
+            font-weight: bold; 
+            color: #1976d2;
+        }
+        .status { 
+            margin-top: 15px; 
+            padding: 10px; 
+            border-radius: 6px;
+        }
+        .pending { background: #fff8e1; color: #ff9800; }
+        .completed { background: #e8f5e8; color: #4caf50; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🖼️ NanoAutomation Dashboard Gallery</h1>
+            <p style="opacity: 0.9;">Sistema automatizado de captura de screenshots</p>
+        </header>
+        
+        <div style="background: white; border-radius: 12px; padding: 25px; margin-bottom: 30px;">
+            <h2 style="color: #4facfe;">📋 Instruções Rápidas</h2>
+            <ol>
+                <li>Abra o <strong>Preview Browser</strong> (botão na barra de ferramentas)</li>
+                <li>Copie cada URL abaixo e cole na barra de endereços</li>
+                <li>Capture o screenshot (Ctrl+Shift+P → "screenshot")</li>
+                <li>Salve na pasta <code>public/images/</code> com o nome especificado</li>
+            </ol>
+        </div>
+
+        <div class="gallery">
+            
+                <div class="card">
+                    <h3>Dashboard Principal</h3>
+                    <p>Interface inicial do sistema com acesso rápido aos principais módulos</p>
+                    <div class="url">http://localhost:3000/dashboard</div>
+                    <div class="filename">dashboard-home.png</div>
+                    <div class="status pending">🟡 Pendente</div>
+                </div>
+            
+                <div class="card">
+                    <h3>Dashboard Corretiva</h3>
+                    <p>Sistema de gestão de manutenção corretiva com acompanhamento de ações</p>
+                    <div class="url">http://localhost:3000/dashboard/dashboardCorretiva</div>
+                    <div class="filename">dashboard-corretiva.png</div>
+                    <div class="status pending">🟡 Pendente</div>
+                </div>
+            
+                <div class="card">
+                    <h3>Dashboard Lojas</h3>
+                    <p>Gestão completa de lojas com monitoramento de equipamentos e defeitos</p>
+                    <div class="url">http://localhost:3000/dashboard/dashboardLojas</div>
+                    <div class="filename">dashboard-lojas.png</div>
+                    <div class="status pending">🟡 Pendente</div>
+                </div>
+            
+                <div class="card">
+                    <h3>Dashboard CMS</h3>
+                    <p>Monitoramento centralizado de centros de manutenção e seus equipamentos</p>
+                    <div class="url">http://localhost:3000/dashboard/dashboardCms</div>
+                    <div class="filename">dashboard-cms.png</div>
+                    <div class="status pending">🟡 Pendente</div>
+                </div>
+            
+                <div class="card">
+                    <h3>Dashboard CVF</h3>
+                    <p>Acompanhamento de sistemas de controle de vazamento de fluidos</p>
+                    <div class="url">http://localhost:3000/dashboard/dashboardCvf</div>
+                    <div class="filename">dashboard-cvf.png</div>
+                    <div class="status pending">🟡 Pendente</div>
+                </div>
+            
+                <div class="card">
+                    <h3>Dashboard SDAI</h3>
+                    <p>Sistema de detecção e alarme de incêndio com monitoramento em tempo real</p>
+                    <div class="url">http://localhost:3000/dashboard/dashboardSdai</div>
+                    <div class="filename">dashboard-sdai.png</div>
+                    <div class="status pending">🟡 Pendente</div>
+                </div>
+            
+                <div class="card">
+                    <h3>Dashboard SCP</h3>
+                    <p>Proteção contra descargas atmosféricas e monitoramento de SPDA</p>
+                    <div class="url">http://localhost:3000/dashboard/dashboardScp</div>
+                    <div class="filename">dashboard-scp.png</div>
+                    <div class="status pending">🟡 Pendente</div>
+                </div>
+            
+                <div class="card">
+                    <h3>Dashboard Access Control</h3>
+                    <p>Sistema de controle de acesso com gestão de dispositivos de segurança</p>
+                    <div class="url">http://localhost:3000/dashboard/dashboardAccessControl</div>
+                    <div class="filename">dashboard-access-control.png</div>
+                    <div class="status pending">🟡 Pendente</div>
+                </div>
+            
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px; color: white;">
+            <p>✅ Após capturar todos os screenshots, eles aparecerão automaticamente no README.md</p>
+        </div>
+    </div>
+</body>
+</html>
