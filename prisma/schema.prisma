@@ -1,0 +1,516 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model cM {
+  id           String        @id @default(uuid())
+  nome         String
+  localizacao  String?
+  equipamentos Equipamento[]
+
+  @@map("cms")
+}
+
+model Equipamento {
+  id         String            @id @default(uuid())
+  nome       String
+  descricao  String?
+  cmId       String
+  status     EquipamentoStatus @default(OPERACIONAL)
+  imagePaths String?
+  atuadores  Atuador[]
+  cm         cM                @relation(fields: [cmId], references: [id])
+  sensores   Sensor[]
+
+  @@index([cmId], map: "equipamentos_cmId_fkey")
+  @@map("equipamentos")
+}
+
+model Cvf {
+  id                 String                  @id @default(uuid())
+  vigaFria           String?
+  piso               String?
+  sensorTemperatura  SensorTemperaturaStatus
+  sensorUmidade      SensorUmidadeStatus
+  localizacaoQuadro  String?
+  localizacaoValvula String?
+  atuador            String?
+  observacoes        String?
+  createdAt          DateTime                @default(now())
+  updatedAt          DateTime                @updatedAt
+  imagePaths         String?
+
+  @@map("cvfs")
+}
+
+model Atuador {
+  id               String         @id @default(uuid())
+  nome             String
+  tipo             String
+  descricaoDefeito String?
+  equipamentoId    String
+  estado           AtuadorStatus? @default(OPERACIONAL)
+  imagePaths       String?
+  equipamento      Equipamento    @relation(fields: [equipamentoId], references: [id])
+
+  @@index([equipamentoId], map: "atuadores_equipamentoId_fkey")
+  @@map("atuadores")
+}
+
+model Sensor {
+  id               String        @id @default(uuid())
+  nome             String
+  tipo             String
+  equipamentoId    String
+  descricaoDefeito String?
+  estado           SensorStatus? @default(OPERACIONAL)
+  imagePaths       String?
+  equipamento      Equipamento   @relation(fields: [equipamentoId], references: [id])
+
+  @@index([equipamentoId], map: "sensores_equipamentoId_fkey")
+  @@map("sensores")
+}
+
+model Loja {
+  id                     String                       @id @default(uuid())
+  nome                   String
+  LUC                    String                       @unique
+  localizacao            String?
+  smart                  String?
+  idKron                 String?
+  imagem                 String? // Path or URL to the loja image
+  atuadores              AtuadorLoja[]                @relation("LojaAtuadores")
+  equipamentosLoja       EquipamentoLoja[]
+  fireDetectionEquipment FireDetectionEquipmentLoja[]
+  sensores               SensorLoja[]                 @relation("LojaSensores")
+  preventivas            PreventivaLoja[]
+
+  @@map("lojas")
+}
+
+model EquipamentoLoja {
+  id               String                @id @default(uuid())
+  nome             String
+  descricao        String?
+  tipo             String?               @default("KRON")
+  lojaId           String
+  status           EquipamentoLojaStatus @default(OPERACIONAL)
+  descricaoDefeito String? // Observation/notes field
+  imagePaths       String?
+  atuadoresLoja    AtuadorLoja[]         @relation("EquipamentoLojaAtuadores")
+  loja             Loja                  @relation(fields: [lojaId], references: [id], onDelete: Cascade)
+  sensoresLoja     SensorLoja[]          @relation("EquipamentoLojaSensores")
+
+  @@index([lojaId], map: "equipamentos_loja_lojaId_fkey")
+  @@map("equipamentos_loja")
+}
+
+model AtuadorLoja {
+  id                String           @id @default(uuid())
+  nome              String
+  tipo              String
+  existe            Boolean          @default(true)
+  motivoNaoExiste   String?
+  descricaoDefeito  String? // Observation/notes field
+  lojaId            String?
+  equipamentoLojaId String?
+  estado            AtuadorStatus?   @default(OPERACIONAL)
+  equipamentoLoja   EquipamentoLoja? @relation("EquipamentoLojaAtuadores", fields: [equipamentoLojaId], references: [id], onDelete: Cascade)
+  loja              Loja?            @relation("LojaAtuadores", fields: [lojaId], references: [id], onDelete: Cascade)
+
+  @@index([equipamentoLojaId], map: "atuadores_loja_equipamentoLojaId_fkey")
+  @@index([lojaId], map: "atuadores_loja_lojaId_fkey")
+  @@map("atuadores_loja")
+}
+
+model SensorLoja {
+  id                String                @id @default(uuid())
+  nome              String
+  tipo              String
+  ultimaAtivacao    DateTime?
+  existe            Boolean               @default(true)
+  motivoNaoExiste   String?
+  descricaoDefeito  String? // Observation/notes field
+  lojaId            String?
+  equipamentoLojaId String?
+  estado            sensores_loja_estado? @default(OPERACIONAL)
+  imagePaths        String?               @db.Text
+  equipamentoLoja   EquipamentoLoja?      @relation("EquipamentoLojaSensores", fields: [equipamentoLojaId], references: [id], onDelete: Cascade)
+  loja              Loja?                 @relation("LojaSensores", fields: [lojaId], references: [id], onDelete: Cascade)
+
+  @@index([equipamentoLojaId], map: "sensores_loja_equipamentoLojaId_fkey")
+  @@index([lojaId], map: "sensores_loja_lojaId_fkey")
+  @@map("sensores_loja")
+}
+
+model FireDetectionEquipmentLoja {
+  id           String  @id @default(cuid())
+  nome         String
+  tipo         String
+  modelo       String?
+  existe       Boolean
+  lojaId       String
+  comissionada Boolean
+  tipoLoja     String
+  lacoDetec    String
+  v24Dc2       Boolean
+  stGas        Boolean
+  cmdAlarme    Boolean
+  stAlarme     Boolean
+  stFalha      Boolean
+  loja         Loja    @relation(fields: [lojaId], references: [id])
+
+  @@index([lojaId], map: "fire_detection_equipment_loja_lojaId_fkey")
+  @@map("fire_detection_equipment_loja")
+}
+
+model Colaborador {
+  id     String @id @default(uuid())
+  nome   String
+  funcao String
+
+  @@map("colaboradores")
+}
+
+model corretivas {
+  id            String            @id @default(uuid())
+  data          DateTime
+  descricao     String
+  local         String
+  colaborador   String?
+  solicitacao   String
+  solicitante   String
+  status        corretivas_status
+  dataConclusao DateTime?
+  sistema       String?
+  categoria     String?
+  formaCorrecao String?
+  fotocorretiva fotocorretiva[]
+}
+
+model fotocorretiva {
+  id          String     @id @default(uuid())
+  url         String
+  corretivaId String
+  createdAt   DateTime   @default(now())
+  corretivas  corretivas @relation(fields: [corretivaId], references: [id], map: "FotoCorretiva_corretivaId_fkey")
+
+  @@index([corretivaId], map: "FotoCorretiva_corretivaId_fkey")
+}
+
+model CmsTeatro {
+  id          String    @id @default(uuid())
+  nome        String
+  localizacao String?
+  descricao   String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  maquinas    Maquina[]
+
+  @@map("cms_teatro")
+}
+
+model Maquina {
+  id              String            @id @default(uuid())
+  nome            String
+  descricao       String?
+  localizacao     String?
+  status          MaquinaStatus     @default(OPERACIONAL)
+  cmsTeatroId     String
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  imagePaths      String?
+  atuadoresteatro atuadoresteatro[]
+  cmsTeatro       CmsTeatro         @relation(fields: [cmsTeatroId], references: [id])
+  sensores        SensorTeatro[]
+
+  @@index([cmsTeatroId], map: "maquinas_cmsTeatroId_fkey")
+  @@map("maquinas")
+}
+
+model SensorTeatro {
+  id        String       @id @default(uuid())
+  nome      String
+  tipo      String
+  descricao String?
+  status    SensorStatus @default(OPERACIONAL)
+  maquinaId String
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  maquina   Maquina      @relation(fields: [maquinaId], references: [id])
+
+  @@index([maquinaId], map: "sensores_teatro_maquinaId_fkey")
+  @@map("sensores_teatro")
+}
+
+model AccessController {
+  id              String              @id @default(uuid())
+  name            String
+  status          AccessControlStatus @default(OPERACIONAL)
+  location        String?
+  lastUpdated     DateTime            @default(now())
+  description     String?
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  imagePaths      String?             @db.Text
+  electromagnets  Electromagnet[]
+  magneticSensors MagneticSensor[]
+  requestButtons  RequestButton[]
+
+  @@map("access_controllers")
+}
+
+model RequestButton {
+  id           String              @id @default(uuid())
+  name         String
+  status       AccessControlStatus @default(OPERACIONAL)
+  location     String?
+  lastUpdated  DateTime            @default(now())
+  description  String?
+  controllerId String?
+  buttonType   String?             @default("ENTRY")
+  isPressed    Boolean             @default(false)
+  lastPressed  DateTime?
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  imagePaths   String?             @db.Text
+  controller   AccessController?   @relation(fields: [controllerId], references: [id])
+
+  @@index([controllerId], map: "request_buttons_controllerId_fkey")
+  @@map("request_buttons")
+}
+
+model Electromagnet {
+  id               String              @id @default(uuid())
+  name             String
+  status           AccessControlStatus @default(OPERACIONAL)
+  location         String?
+  lastUpdated      DateTime            @default(now())
+  description      String?
+  controllerId     String?
+  isLocked         Boolean             @default(false)
+  lockStatus       String?             @default("LOCKED")
+  powerConsumption Float?              @default(0)
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+  imagePaths       String?             @db.Text
+  controller       AccessController?   @relation(fields: [controllerId], references: [id])
+
+  @@index([controllerId], map: "electromagnets_controllerId_fkey")
+  @@map("electromagnets")
+}
+
+model MagneticSensor {
+  id            String              @id @default(uuid())
+  name          String
+  status        AccessControlStatus @default(OPERACIONAL)
+  location      String?
+  lastUpdated   DateTime            @default(now())
+  description   String?
+  controllerId  String?
+  sensorType    String?             @default("DOOR")
+  isClosed      Boolean             @default(true)
+  lastTriggered DateTime?
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  imagePaths    String?             @db.Text
+  controller    AccessController?   @relation(fields: [controllerId], references: [id])
+
+  @@index([controllerId], map: "magnetic_sensors_controllerId_fkey")
+  @@map("magnetic_sensors")
+}
+
+model atuadoresteatro {
+  id        String                 @id
+  nome      String
+  tipo      String
+  descricao String?
+  status    atuadoresteatro_status @default(OPERACIONAL)
+  maquinaId String
+  createdAt DateTime               @default(now())
+  updatedAt DateTime
+  maquinas  Maquina                @relation(fields: [maquinaId], references: [id], map: "atuadoresTeatro_maquinaId_fkey")
+
+  @@index([maquinaId], map: "atuadoresTeatro_maquinaId_fkey")
+}
+
+model PreventivaLoja {
+  id           String           @id @default(uuid())
+  lojaId       String?
+  lojaLUC      String
+  lojaNome     String
+  dataAgendada DateTime
+  dataExecucao DateTime?
+  status       PreventivaStatus @default(PENDENTE)
+  tecnico      String?
+  observacoes  String?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  // Relations
+  loja      Loja?            @relation(fields: [lojaId], references: [id])
+  checklist ChecklistItem[]
+  fotos     FotoPreventiva[]
+
+  @@index([lojaId], map: "preventivas_loja_lojaId_fkey")
+  @@index([lojaLUC])
+  @@index([dataAgendada])
+  @@index([status])
+  @@map("preventivas_loja")
+}
+
+model ChecklistItem {
+  id               String   @id @default(uuid())
+  preventivaLojaId String
+  categoria        String // SENSOR, EQUIPAMENTO, GERAL
+  tipoEquipamento  String? // SENSOR_TEMPERATURA, SENSOR_MOVIMENTO, BOTAO_PANICO, QUADRO_AUTOMACAO
+  descricao        String
+  concluido        Boolean  @default(false)
+  observacao       String?
+  fotoObrigatoria  Boolean  @default(true) // Whether a photo is mandatory for this item
+  fotoCapturada    Boolean  @default(false)
+  lucReferencia    String? // LUC where this item should be checked
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // Relations
+  preventivaLoja PreventivaLoja @relation(fields: [preventivaLojaId], references: [id], onDelete: Cascade)
+
+  @@index([preventivaLojaId], map: "checklist_items_preventivaLojaId_fkey")
+  @@map("checklist_items")
+}
+
+model FotoPreventiva {
+  id               String   @id @default(uuid())
+  preventivaLojaId String
+  itemId           String
+  lojaLUC          String
+  tipoEquipamento  String // SENSOR_TEMPERATURA, SENSOR_MOVIMENTO, BOTAO_PANICO, QUADRO_AUTOMACAO, OUTRO
+  url              String   @db.Text // Store full Windows path or URL
+  descricao        String
+  mimeType         String?  @default("image/jpeg") // MIME type for better file handling
+  fileSize         Int? // File size in bytes for metadata
+  dataCaptura      DateTime @default(now())
+  tecnico          String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // Relations
+  preventivaLoja PreventivaLoja @relation(fields: [preventivaLojaId], references: [id], onDelete: Cascade)
+
+  // Indexes for better query performance
+  @@index([preventivaLojaId], map: "fotos_preventiva_preventivaLojaId_fkey")
+  @@index([itemId])
+  @@index([lojaLUC])
+  @@index([tipoEquipamento])
+  @@index([dataCaptura])
+  @@index([tecnico])
+  @@map("fotos_preventiva")
+}
+
+model Ocorrencia {
+  id          String           @id @default(uuid())
+  descricao   String
+  solucao     String
+  colaborador String
+  status      OcorrenciaStatus @default(ANDAMENTO)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  imagePaths  String?          @db.Text // Store image paths as JSON array string
+
+  @@map("ocorrencias")
+}
+
+enum EquipamentoStatus {
+  OPERACIONAL
+  DEFEITO
+  MANUTENCAO
+  DESATIVADO
+  DESCONHECIDO
+}
+
+enum EquipamentoLojaStatus {
+  OPERACIONAL
+  MANUTENCAO
+  DESATIVADO
+  DESCONHECIDO
+  DEFEITO
+}
+
+enum AtuadorStatus {
+  OPERACIONAL
+  DEFEITO
+  MANUTENCAO
+  DESCONHECIDO
+}
+
+enum SensorStatus {
+  OPERACIONAL
+  DEFEITO
+  MANUTENCAO
+  DESCONHECIDO
+}
+
+enum corretivas_status {
+  ANDAMENTO
+  ESPERA
+  CONCLUIDO
+}
+
+enum SensorTemperaturaStatus {
+  OPERACIONAL
+  DEFEITO
+  N_A
+}
+
+enum SensorUmidadeStatus {
+  OPERACIONAL
+  DEFEITO
+  N_A
+}
+
+enum MaquinaStatus {
+  OPERACIONAL
+  DEFEITO
+  MANUTENCAO
+  DESATIVADO
+  DESCONHECIDO
+}
+
+enum AccessControlStatus {
+  OPERACIONAL
+  DEFEITO
+  MANUTENCAO
+  N_A
+}
+
+enum atuadoresteatro_status {
+  OPERACIONAL
+  DEFEITO
+  MANUTENCAO
+  DESCONHECIDO
+}
+
+enum sensores_loja_estado {
+  OPERACIONAL
+  DEFEITO
+  MANUTENCAO
+  DESCONHECIDO
+}
+
+enum PreventivaStatus {
+  PENDENTE
+  EM_ANDAMENTO
+  CONCLUIDA
+  CANCELADA
+}
+
+enum OcorrenciaStatus {
+  ANDAMENTO
+  CONCLUIDO
+}

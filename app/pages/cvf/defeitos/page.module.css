@@ -1,0 +1,14 @@
+.badgeDanger {
+  background-color: #dc3545 !important;
+  color: white !important;
+}
+
+.badgeSecondary {
+  background-color: #85bb65 !important;
+  color: white !important;
+}
+
+.badgeLight {
+  background-color: #f8f9fa !important;
+  color: #212529 !important;
+}

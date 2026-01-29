@@ -1,0 +1,414 @@
+Rotas da API para Teste com Postman
+1. CMs (Centrais de Monitoramento)
+Base URL: http://localhost:3000/api/cms
+
+Listar todos os CMs:
+
+Método: GET
+
+URL: http://localhost:3000/api/cms
+
+Exemplo de Resposta:
+
+[
+  {
+    "id": "uuid-do-cm-1",
+    "nome": "CM Principal",
+    "localizacao": "Edifício Central",
+    "equipamentos": [
+      // ... equipamentos relacionados
+    ]
+  },
+  {
+    "id": "uuid-do-cm-2",
+    "nome": "CM Secundário",
+    "localizacao": "Anexo 2"
+  }
+]
+
+Obter CM por ID:
+
+Método: GET
+
+URL: http://localhost:3000/api/cms/{id}
+
+Exemplo: http://localhost:3000/api/cms/uuid-do-cm-1
+
+Exemplo de Resposta:
+
+{
+  "id": "uuid-do-cm-1",
+  "nome": "CM Principal",
+  "localizacao": "Edifício Central",
+  "equipamentos": [
+    // ... equipamentos relacionados
+  ]
+}
+
+Criar novo CM:
+
+Método: POST
+
+URL: http://localhost:3000/api/cms
+
+Body (JSON):
+
+{
+  "nome": "CM Nordeste",
+  "localizacao": "Fortaleza, CE"
+}
+
+Exemplo de Resposta:
+
+{
+  "id": "novo-uuid-gerado",
+  "nome": "CM Nordeste",
+  "localizacao": "Fortaleza, CE"
+}
+
+Atualizar CM existente:
+
+Método: PUT
+
+URL: http://localhost:3000/api/cms/{id}
+
+Exemplo: http://localhost:3000/api/cms/uuid-do-cm-1
+
+Body (JSON): (Envie apenas os campos que deseja atualizar)
+
+{
+  "localizacao": "Edifício Principal - Sala 101"
+}
+
+Exemplo de Resposta:
+
+{
+  "id": "uuid-do-cm-1",
+  "nome": "CM Principal",
+  "localizacao": "Edifício Principal - Sala 101",
+  "equipamentos": []
+}
+
+Deletar CM:
+
+Método: DELETE
+
+URL: http://localhost:3000/api/cms/{id}
+
+Exemplo: http://localhost:3000/api/cms/uuid-do-cm-a-deletar
+
+Exemplo de Resposta: Status 204 No Content (corpo vazio)
+
+2. Equipamentos
+Base URL: http://localhost:3000/api/equipamentos
+
+Listar todos os Equipamentos:
+
+Método: GET
+
+URL: http://localhost:3000/api/equipamentos
+
+Exemplo de Resposta:
+
+[
+  {
+    "id": "uuid-do-equipamento-1",
+    "nome": "Servidor Principal",
+    "descricao": "Servidor de dados central",
+    "cmId": "uuid-do-cm-1",
+    "cm": { /* ... dados do CM */ },
+    "atuadores": [],
+    "sensores": []
+  }
+]
+
+Obter Equipamento por ID:
+
+Método: GET
+
+URL: http://localhost:3000/api/equipamentos/{id}
+
+Exemplo: http://localhost:3000/api/equipamentos/uuid-do-equipamento-1
+
+Exemplo de Resposta:
+
+{
+  "id": "uuid-do-equipamento-1",
+  "nome": "Servidor Principal",
+  "descricao": "Servidor de dados central",
+  "cmId": "uuid-do-cm-1",
+  "cm": { /* ... dados do CM */ },
+  "atuadores": [
+    // ... atuadores relacionados
+  ],
+  "sensores": [
+    // ... sensores relacionados
+  ]
+}
+
+Criar novo Equipamento:
+
+Método: POST
+
+URL: http://localhost:3000/api/equipamentos
+
+Body (JSON):
+
+{
+  "nome": "Sensor de Temperatura Sala A",
+  "descricao": "Monitora a temperatura ambiente",
+  "cmId": "uuid-do-cm-existente"
+}
+
+Exemplo de Resposta:
+
+{
+  "id": "novo-uuid-gerado",
+  "nome": "Sensor de Temperatura Sala A",
+  "descricao": "Monitora a temperatura ambiente",
+  "cmId": "uuid-do-cm-existente"
+}
+
+Atualizar Equipamento existente:
+
+Método: PUT
+
+URL: http://localhost:3000/api/equipamentos/{id}
+
+Exemplo: http://localhost:3000/api/equipamentos/uuid-do-equipamento-1
+
+Body (JSON):
+
+{
+  "descricao": "Servidor de dados central atualizado",
+  "cmId": "outro-uuid-do-cm-existente"
+}
+
+Exemplo de Resposta:
+
+{
+  "id": "uuid-do-equipamento-1",
+  "nome": "Servidor Principal",
+  "descricao": "Servidor de dados central atualizado",
+  "cmId": "outro-uuid-do-cm-existente",
+  "cm": { /* ... dados do novo CM */ },
+  "atuadores": [],
+  "sensores": []
+}
+
+Deletar Equipamento:
+
+Método: DELETE
+
+URL: http://localhost:3000/api/equipamentos/{id}
+
+Exemplo: http://localhost:3000/api/equipamentos/uuid-do-equipamento-a-deletar
+
+Exemplo de Resposta: Status 204 No Content
+
+3. Atuadores
+Base URL: http://localhost:3000/api/atuadores
+
+Listar todos os Atuadores:
+
+Método: GET
+
+URL: http://localhost:3000/api/atuadores
+
+Exemplo de Resposta:
+
+[
+  {
+    "id": "uuid-do-atuador-1",
+    "nome": "Válvula de Irrigação",
+    "tipo": "Válvula",
+    "valorAtual": 0,
+    "equipamentoId": "uuid-do-equipamento-1",
+    "equipamento": { /* ... dados do Equipamento */ }
+  }
+]
+
+Obter Atuador por ID:
+
+Método: GET
+
+URL: http://localhost:3000/api/atuadores/{id}
+
+Exemplo: http://localhost:3000/api/atuadores/uuid-do-atuador-1
+
+Exemplo de Resposta:
+
+{
+  "id": "uuid-do-atuador-1",
+  "nome": "Válvula de Irrigação",
+  "tipo": "Válvula",
+  "valorAtual": 0,
+  "equipamentoId": "uuid-do-equipamento-1",
+  "equipamento": { /* ... dados do Equipamento */ }
+}
+
+Criar novo Atuador:
+
+Método: POST
+
+URL: http://localhost:3000/api/atuadores
+
+Body (JSON):
+
+{
+  "nome": "Motor de Ventilação",
+  "tipo": "Motor",
+  "valorAtual": 0,
+  "equipamentoId": "uuid-do-equipamento-existente"
+}
+
+Exemplo de Resposta:
+
+{
+  "id": "novo-uuid-gerado",
+  "nome": "Motor de Ventilação",
+  "tipo": "Motor",
+  "valorAtual": 0,
+  "equipamentoId": "uuid-do-equipamento-existente"
+}
+
+Atualizar Atuador existente:
+
+Método: PUT
+
+URL: http://localhost:3000/api/atuadores/{id}
+
+Exemplo: http://localhost:3000/api/atuadores/uuid-do-atuador-1
+
+Body (JSON):
+
+{
+  "valorAtual": 1
+}
+
+Exemplo de Resposta:
+
+{
+  "id": "uuid-do-atuador-1",
+  "nome": "Válvula de Irrigação",
+  "tipo": "Válvula",
+  "valorAtual": 1,
+  "equipamentoId": "uuid-do-equipamento-1",
+  "equipamento": { /* ... dados do Equipamento */ }
+}
+
+Deletar Atuador:
+
+Método: DELETE
+
+URL: http://localhost:3000/api/atuadores/{id}
+
+Exemplo: http://localhost:3000/api/atuadores/uuid-do-atuador-a-deletar
+
+Exemplo de Resposta: Status 204 No Content
+
+4. Sensores
+Base URL: http://localhost:3000/api/sensores
+
+Listar todos os Sensores:
+
+Método: GET
+
+URL: http://localhost:3000/api/sensores
+
+Exemplo de Resposta:
+
+[
+  {
+    "id": "uuid-do-sensor-1",
+    "nome": "Sensor de Umidade",
+    "tipo": "Umidade",
+    "valorAtual": 65.2,
+    "unidadeMedida": "%",
+    "equipamentoId": "uuid-do-equipamento-1",
+    "equipamento": { /* ... dados do Equipamento */ }
+  }
+]
+
+Obter Sensor por ID:
+
+Método: GET
+
+URL: http://localhost:3000/api/sensores/{id}
+
+Exemplo: http://localhost:3000/api/sensores/uuid-do-sensor-1
+
+Exemplo de Resposta:
+
+{
+  "id": "uuid-do-sensor-1",
+  "nome": "Sensor de Umidade",
+  "tipo": "Umidade",
+  "valorAtual": 65.2,
+  "unidadeMedida": "%",
+  "equipamentoId": "uuid-do-equipamento-1",
+  "equipamento": { /* ... dados do Equipamento */ }
+}
+
+Criar novo Sensor:
+
+Método: POST
+
+URL: http://localhost:3000/api/sensores
+
+Body (JSON):
+
+{
+  "nome": "Sensor de Luminosidade",
+  "tipo": "Luminosidade",
+  "valorAtual": 500,
+  "unidadeMedida": "lux",
+  "equipamentoId": "uuid-do-equipamento-existente"
+}
+
+Exemplo de Resposta:
+
+{
+  "id": "novo-uuid-gerado",
+  "nome": "Sensor de Luminosidade",
+  "tipo": "Luminosidade",
+  "valorAtual": 500,
+  "unidadeMedida": "lux",
+  "equipamentoId": "uuid-do-equipamento-existente"
+}
+
+Atualizar Sensor existente:
+
+Método: PUT
+
+URL: http://localhost:3000/api/sensores/{id}
+
+Exemplo: http://localhost:3000/api/sensores/uuid-do-sensor-1
+
+Body (JSON):
+
+{
+  "valorAtual": 70.5
+}
+
+Exemplo de Resposta:
+
+{
+  "id": "uuid-do-sensor-1",
+  "nome": "Sensor de Umidade",
+  "tipo": "Umidade",
+  "valorAtual": 70.5,
+  "unidadeMedida": "%",
+  "equipamentoId": "uuid-do-equipamento-1",
+  "equipamento": { /* ... dados do Equipamento */ }
+}
+
+Deletar Sensor:
+
+Método: DELETE
+
+URL: http://localhost:3000/api/sensores/{id}
+
+Exemplo: http://localhost:3000/api/sensores/uuid-do-sensor-a-deletar
+
+Exemplo de Resposta: Status 204 No Content

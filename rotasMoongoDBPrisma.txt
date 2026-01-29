@@ -1,0 +1,135 @@
+// schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// --- Existing Models (Casa de Máquinas) ---
+// Estes modelos parecem robustos para o contexto de CMs e suas relações.
+model cM {
+  id           String        @id @default(uuid()) @map("_id")
+  nome         String
+  localizacao  String?
+  equipamentos Equipamento[]
+
+  @@map("cms")
+}
+
+model Equipamento {
+  id          String    @id @default(uuid()) @map("_id")
+  nome        String
+  descricao   String?
+  cmId        String
+  cm          cM        @relation(fields: [cmId], references: [id])
+
+  estagio1    String?
+  estagio2    String?
+  estagio3    String?
+  atuadores   Atuador[]
+  sensores    Sensor[]
+
+  @@map("equipamentos")
+}
+
+model Atuador {
+  id               String    @id @default(uuid()) @map("_id")
+  nome             String
+  tipo             String
+  valorAtual       Float
+  descricaoDefeito String?
+  equipamentoId    String
+  equipamento      Equipamento @relation(fields: [equipamentoId], references: [id])
+
+  @@map("atuadores")
+}
+
+model Sensor {
+  id            String    @id @default(uuid()) @map("_id")
+  nome          String
+  tipo          String
+  valorAtual    Float?
+  equipamentoId String
+  equipamento   Equipamento @relation(fields: [equipamentoId], references: [id])
+
+  @@map("sensores")
+}
+
+// --- New and Updated Models (Lojas) ---
+model Loja {
+  id               String          @id @default(uuid()) @map("_id")
+  nome             String
+  LUC              String          @unique // LUC como String única é ótimo.
+  localizacao      String?
+  equipamentosLoja EquipamentoLoja[]
+
+  // Sugestão: Se um AtuadorLoja ou SensorLoja REALMENTE pode existir sem estar ligado a um EquipamentoLoja, mas ligado DIRETAMENTE à Loja, essas relações estão corretas. Caso contrário, podem ser removidas para simplificar e garantir a hierarquia.
+  atuadores        AtuadorLoja[]   @relation("LojaAtuadores")
+  sensores         SensorLoja[]    @relation("LojaSensores")
+
+  @@map("lojas")
+}
+
+model EquipamentoLoja {
+  id              String          @id @default(uuid()) @map("_id")
+  nome            String
+  descricao       String?
+  lojaId          String
+  loja            Loja            @relation(fields: [lojaId], references: [id])
+
+  // Relações para atuadores e sensores que PERTENCEM a este EquipamentoLoja
+  atuadoresLoja   AtuadorLoja[]   @relation("EquipamentoLojaAtuadores")
+  sensoresLoja    SensorLoja[]    @relation("EquipamentoLojaSensores")
+
+  @@map("equipamentos_loja")
+}
+
+model AtuadorLoja {
+  id               String           @id @default(uuid()) @map("_id")
+  nome             String
+  tipo             String
+  valorAtual       Float
+  existe           Boolean          @default(true)
+  motivoNaoExiste  String?
+
+  // Relação para a Loja (opcional):
+  // Usamos `@optional` na `lojaId` e `loja` para indicar que um AtuadorLoja pode ou não estar diretamente ligado a uma Loja.
+  // IMPORTANTE: Se um atuador DEVE estar ligado a uma Loja OU um EquipamentoLoja, e NUNCA sozinho, considere fazer um campo obrigatório para um dos dois, ou adicione validação na sua aplicação.
+  lojaId           String?
+  loja             Loja?            @relation("LojaAtuadores", fields: [lojaId], references: [id])
+
+  // Relação para EquipamentoLoja (opcional):
+  // Similarmente, se o atuador pode ou não pertencer a um EquipamentoLoja específico.
+  // Um atuador pode ter tanto lojaId quanto equipamentoLojaId, mas o Prisma requer que você defina a lógica de qual relação é a principal em sua aplicação.
+  equipamentoLojaId String?
+  equipamentoLoja   EquipamentoLoja? @relation("EquipamentoLojaAtuadores", fields: [equipamentoLojaId], references: [id])
+
+  // Validação: Se um AtuadorLoja DEVE estar associado a uma Loja OU a um EquipamentoLoja, você pode adicionar uma @map("_id") nos campos id e um @db.ObjectId
+  // do Prisma. Isso é mais para validação de dados no seu lado da aplicação.
+
+  @@map("atuadores_loja")
+}
+
+model SensorLoja {
+  id               String          @id @default(uuid()) @map("_id")
+  nome             String
+  tipo             String
+  valorAtual       Float?
+  ultimaAtivacao   DateTime?
+  existe           Boolean         @default(true)
+  motivoNaoExiste  String?
+
+  // Relação para a Loja (opcional):
+  lojaId           String?
+  loja             Loja?           @relation("LojaSensores", fields: [lojaId], references: [id])
+
+  // Relação para EquipamentoLoja (opcional):
+  equipamentoLojaId String?
+  equipamentoLoja   EquipamentoLoja? @relation("EquipamentoLojaSensores", fields: [equipamentoLojaId], references: [id])
+
+  @@map("sensores_loja")
+}

@@ -1,0 +1,129 @@
+// schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url       = env("DATABASE_URL")
+}
+
+// --- Existing Models (Casa de Máquinas) ---
+model cM {
+  id           String        @id @default(uuid())
+  nome         String
+  localizacao  String?
+  equipamentos Equipamento[]
+
+  @@map("cms")
+}
+
+model Equipamento {
+  id          String    @id @default(uuid())
+  nome        String
+  descricao   String?
+  cmId        String
+  cm          cM        @relation(fields: [cmId], references: [id])
+
+  estagio1    String?
+  estagio2    String?
+  estagio3    String?
+  atuadores   Atuador[]
+  sensores    Sensor[]
+
+  @@map("equipamentos")
+}
+
+model Atuador {
+  id               String      @id @default(uuid())
+  nome             String
+  tipo             String
+  valorAtual       Float
+  descricaoDefeito String?
+  equipamentoId    String
+  equipamento      Equipamento @relation(fields: [equipamentoId], references: [id])
+
+  @@map("atuadores")
+}
+
+model Sensor {
+  id            String      @id @default(uuid())
+  nome          String
+  tipo          String
+  valorAtual    Float?
+  equipamentoId String
+  equipamento   Equipamento @relation(fields: [equipamentoId], references: [id])
+
+  @@map("sensores")
+}
+
+// --- New and Updated Models (Lojas) ---
+model Loja {
+  id               String            @id @default(uuid())
+  nome             String
+  LUC              String            @unique // Adicionado LUC como String única
+  localizacao      String?
+  equipamentosLoja EquipamentoLoja[]
+  // NEW: Add reverse relations for AtuadorLoja and SensorLoja directly linked to Loja
+  // These are for atuadores/sensores that might be directly associated with a Loja, not necessarily an EquipamentoLoja
+  atuadores        AtuadorLoja[]     @relation("LojaAtuadores")
+  sensores         SensorLoja[]      @relation("LojaSensores")
+
+
+  @@map("lojas")
+}
+
+// EquipamentoLoja continua sendo um agrupador opcional dentro da loja
+model EquipamentoLoja {
+  id            String         @id @default(uuid())
+  nome          String
+  descricao     String?
+  lojaId        String
+  loja          Loja           @relation(fields: [lojaId], references: [id])
+
+  atuadoresLoja AtuadorLoja[]  @relation("EquipamentoLojaAtuadores") // Corrected: Add relation name
+  sensoresLoja  SensorLoja[]   @relation("EquipamentoLojaSensores") // Corrected: Add relation name
+
+  @@map("equipamentos_loja")
+}
+
+model AtuadorLoja {
+  id                String          @id @default(uuid())
+  nome              String
+  tipo              String          // Ex: "Luz Vitrine", "Ar Condicionado"
+  valorAtual        Float           // 0 para desligado, 1 para ligado, etc.
+  existe            Boolean         @default(true) // NOVO: Campo para indicar se o atuador existe
+  motivoNaoExiste   String?         // NOVO: Motivo se o atuador não existe
+
+  // Fix 1 & 3: Add back-relation to Loja (if AtuadorLoja can exist without EquipamentoLoja, directly linked to Loja)
+  lojaId            String?
+  loja              Loja?           @relation("LojaAtuadores", fields: [lojaId], references: [id]) // Connects to Loja's 'atuadores'
+
+  // Fix 2 & 4: Add back-relation to EquipamentoLoja
+  equipamentoLojaId String?
+  equipamentoLoja   EquipamentoLoja? @relation("EquipamentoLojaAtuadores", fields: [equipamentoLojaId], references: [id]) // Connects to EquipamentoLoja's 'atuadoresLoja'
+
+  @@map("atuadores_loja")
+}
+
+// Unificado todos os tipos de sensores sob um único modelo `SensorLoja`
+model SensorLoja {
+  id                String          @id @default(uuid())
+  nome              String
+  tipo              String          // NOVO: "BotaoPanico", "TemperaturaAmbiente", "Porta", "Movimento"
+  valorAtual        Float?          // Valor lido pelo sensor (ex: temperatura, 0/1 para porta/movimento/pânico)
+  ultimaAtivacao    DateTime?       // Relevante para BotaoPanico
+  existe            Boolean         @default(true) // NOVO: Campo para indicar se o sensor existe
+  motivoNaoExiste   String?         // NOVO: Motivo se o sensor não existe
+
+  // Fix 5: Add back-relation to Loja (if SensorLoja can exist without EquipamentoLoja, directly linked to Loja)
+  lojaId            String?
+  loja              Loja?           @relation("LojaSensores", fields: [lojaId], references: [id]) // Connects to Loja's 'sensores'
+
+  // Fix 6: Add back-relation to EquipamentoLoja
+  equipamentoLojaId String?
+  equipamentoLoja   EquipamentoLoja? @relation("EquipamentoLojaSensores", fields: [equipamentoLojaId], references: [id]) // Connects to EquipamentoLoja's 'sensoresLoja'
+
+  @@map("sensores_loja")
+}
